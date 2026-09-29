@@ -10,6 +10,7 @@
 - [x] Local-only inactive import planning and an explicit CLI apply command.
 - [x] Automated artifact consistency and Git-history secret scanning.
 - [x] French/English explanations, architecture decisions and limitations.
+- [x] Agent-assisted bootstrap prompt with prerequisites, private credential handling, capability checks and explicit readiness criteria; client-specific end-to-end certification remains future work.
 
 ## Next: connect a real execution backend
 

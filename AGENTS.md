@@ -3,6 +3,7 @@
 This repository is a public reference implementation using synthetic data.
 
 - Read README.md and docs/architecture.md before changing a boundary.
+- For a user-requested local onboarding, follow docs/agent-bootstrap.md. Distinguish laboratory tools from a separately configured n8n management connector and report verified capabilities.
 - The common contract is src/tools.mjs; HTTP and MCP must preserve its semantics.
 - Run npm run check before proposing a release. Never treat a model review as a substitute for these checks.
 - Business functions in src/automations.mjs are the source of truth. Run npm run generate after changes; generated n8n exports must stay in sync.

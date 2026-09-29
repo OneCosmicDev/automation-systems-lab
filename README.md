@@ -57,6 +57,20 @@ L'agent choisit un outil et fournit des données. Les règles de validation et d
 
 ## Connecter un agent
 
+**Vous préférez que votre agent prépare l'environnement ?** Donnez-lui ce message depuis un environnement où il peut utiliser votre terminal et vos fichiers :
+
+```text
+Prépare mon environnement local à partir de https://github.com/OneCosmicDev/automation-systems-lab.
+Lis docs/agent-bootstrap.md et exécute le prompt de démarrage qu'il contient.
+Je veux connecter cet agent à n8n pour créer et tester des workflows.
+Utilise des données fictives et demande-moi de saisir les secrets dans un emplacement privé, jamais dans le chat.
+Vérifie la connexion avec un workflow réellement importé et exécuté avant de déclarer l'installation prête.
+```
+
+Le [prompt complet](docs/agent-bootstrap.md) prévoit l'installation, la connexion, les étapes manuelles éventuelles et la reprise. Il distingue le MCP du laboratoire du connecteur nécessaire pour piloter n8n. Ce parcours assisté dépend des outils et permissions de votre agent ; il ne constitue pas une installation universelle déjà certifiée.
+
+Pour configurer uniquement le laboratoire à la main :
+
 ```sh
 npm run setup    # Crée .env avec deux tokens locaux aléatoires, sans les afficher
 npm start       # Lance le service sur 127.0.0.1:4317

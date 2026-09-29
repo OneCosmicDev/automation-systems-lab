@@ -22,6 +22,8 @@ All outputs are simulated. Nothing is sent to a CRM, mailbox or messaging channe
 
 ## Agent access
 
+For guided setup, ask a coding agent with access to your local terminal and files to follow [the bootstrap prompt](agent-bootstrap.md). It separates the lab gateway from the additional n8n management connector and requires a real import/execution test before declaring readiness. Account setup, private credential entry or a client restart may need your participation. This adaptive procedure is not certified for every agent application.
+
 `npm run setup` creates local tokens without printing them. `npm start` runs an authenticated loopback gateway. MCP stdio clients connect through a thin bridge; ordinary HTTP clients call the same versioned tools. Two independent MCP clients and an HTTP client are tested against shared run state.
 
 Runner tools discover, execute and inspect examples. Maintainer tools validate the workspace and preview an inactive local n8n import. Permissions are enforced by code, not model instructions.

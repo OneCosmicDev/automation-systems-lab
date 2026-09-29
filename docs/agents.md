@@ -1,5 +1,7 @@
 # Connect an agent
 
+For an agent-assisted installation that also configures a separate n8n management connection, use the [bootstrap prompt](agent-bootstrap.md). This page documents the laboratory gateway itself; its tools do not manage n8n.
+
 ## Start the shared gateway
 
 Run `npm ci --ignore-scripts`, `npm run setup`, then `npm start` from the repository root. The setup command preserves an existing `.env` and never prints tokens. Keep the gateway running in its terminal.
