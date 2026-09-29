@@ -1,0 +1,75 @@
+{
+  "name": "[Lab] Classify a failed integration call",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Run synthetic example",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "synthetic-input",
+      "name": "Load fictional input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "notes": "Synthetic fixture only. Replace with a validated source in your own environment.",
+      "parameters": {
+        "jsCode": "return [{ json: {\n  \"status\": 503,\n  \"attempt\": 1,\n  \"maxAttempts\": 3\n} }];"
+      }
+    },
+    {
+      "id": "business-rule",
+      "name": "Validate and evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ],
+      "notes": "Generated from the shared pure business function. No network, credentials, or real delivery.",
+      "parameters": {
+        "jsCode": "function incidentTriage(input) {\n  if (!input || Object.keys(input).sort().join(',') !== 'attempt,maxAttempts,status') throw new Error('INVALID_INPUT');\n  if (!Number.isInteger(input.status) || input.status < 0 || input.status > 599 || (input.status > 0 && input.status < 100)) throw new Error('INVALID_INPUT');\n  if (!Number.isInteger(input.attempt) || !Number.isInteger(input.maxAttempts) || input.attempt < 1 || input.maxAttempts > 5 || input.attempt > input.maxAttempts) throw new Error('INVALID_INPUT');\n  const transient = input.status === 0 || input.status === 429 || input.status >= 500;\n  const retry = transient && input.attempt < input.maxAttempts;\n  return { action: retry ? 'retry' : input.status >= 200 && input.status < 300 ? 'complete' : 'review',\n    delaySeconds: retry ? Math.min(60, 2 ** input.attempt) : 0,\n    reason: retry ? 'transient_failure' : transient ? 'retry_budget_exhausted' : 'terminal_response', delivery: 'simulated' };\n}\ntry {\n  return [{ json: { ok: true, result: incidentTriage($input.first().json) } }];\n} catch {\n  return [{ json: { ok: false, error: { code: \"INVALID_INPUT\" } } }];\n}"
+      }
+    }
+  ],
+  "connections": {
+    "Run synthetic example": {
+      "main": [
+        [
+          {
+            "node": "Load fictional input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load fictional input": {
+      "main": [
+        [
+          {
+            "node": "Validate and evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 60,
+    "timezone": "UTC"
+  },
+  "pinData": {}
+}

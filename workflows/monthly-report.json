@@ -1,0 +1,75 @@
+{
+  "name": "[Lab] Compute an auditable monthly report",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Run synthetic example",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "synthetic-input",
+      "name": "Load fictional input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "notes": "Synthetic fixture only. Replace with a validated source in your own environment.",
+      "parameters": {
+        "jsCode": "return [{ json: {\n  \"current\": {\n    \"visits\": 1200,\n    \"leads\": 60\n  },\n  \"previous\": {\n    \"visits\": 1000,\n    \"leads\": 40\n  }\n} }];"
+      }
+    },
+    {
+      "id": "business-rule",
+      "name": "Validate and evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ],
+      "notes": "Generated from the shared pure business function. No network, credentials, or real delivery.",
+      "parameters": {
+        "jsCode": "function monthlyReport(input) {\n  if (!input || Object.keys(input).sort().join(',') !== 'current,previous') throw new Error('INVALID_INPUT');\n  for (const period of [input.current, input.previous]) {\n    if (!period || Object.keys(period).sort().join(',') !== 'leads,visits') throw new Error('INVALID_INPUT');\n    if (![period.visits, period.leads].every(n => Number.isSafeInteger(n) && n >= 0 && n <= 1000000000)) throw new Error('INVALID_INPUT');\n    if (period.leads > period.visits) throw new Error('LEADS_EXCEED_VISITS');\n  }\n  const round = n => Math.round((n + Number.EPSILON) * 100) / 100;\n  return { visits: input.current.visits, leads: input.current.leads,\n    conversionPercent: input.current.visits === 0 ? null : round(input.current.leads / input.current.visits * 100),\n    visitsChangePercent: input.previous.visits === 0 ? null : round((input.current.visits - input.previous.visits) / input.previous.visits * 100),\n    leadsChangePercent: input.previous.leads === 0 ? null : round((input.current.leads - input.previous.leads) / input.previous.leads * 100),\n    explanation: 'Percent changes with a zero baseline are undefined and returned as null.', delivery: 'simulated' };\n}\ntry {\n  return [{ json: { ok: true, result: monthlyReport($input.first().json) } }];\n} catch {\n  return [{ json: { ok: false, error: { code: \"INVALID_INPUT\" } } }];\n}"
+      }
+    }
+  ],
+  "connections": {
+    "Run synthetic example": {
+      "main": [
+        [
+          {
+            "node": "Load fictional input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load fictional input": {
+      "main": [
+        [
+          {
+            "node": "Validate and evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 60,
+    "timezone": "UTC"
+  },
+  "pinData": {}
+}

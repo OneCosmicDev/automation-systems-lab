@@ -1,0 +1,144 @@
+[
+  {
+    "id": "lead-intake",
+    "version": "1.0.0",
+    "title": "Normalize and route a lead",
+    "description": "Turn an inconsistent inbound contact into a review-ready record. No CRM write or email.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "source": {
+          "enum": [
+            "website",
+            "referral",
+            "event"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "example": {
+      "name": " Alex Example ",
+      "email": " ALEX@example.com ",
+      "source": "referral"
+    }
+  },
+  {
+    "id": "monthly-report",
+    "version": "1.0.0",
+    "title": "Compute an auditable monthly report",
+    "description": "Calculate conversion and month-over-month changes, explicitly handling a zero baseline. No invented narrative or analytics connection.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "current": {
+          "type": "object",
+          "properties": {
+            "visits": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "leads": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            }
+          },
+          "required": [
+            "visits",
+            "leads"
+          ],
+          "additionalProperties": false
+        },
+        "previous": {
+          "type": "object",
+          "properties": {
+            "visits": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "leads": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            }
+          },
+          "required": [
+            "visits",
+            "leads"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "current",
+        "previous"
+      ],
+      "additionalProperties": false
+    },
+    "example": {
+      "current": {
+        "visits": 1200,
+        "leads": 60
+      },
+      "previous": {
+        "visits": 1000,
+        "leads": 40
+      }
+    }
+  },
+  {
+    "id": "incident-triage",
+    "version": "1.0.0",
+    "title": "Classify a failed integration call",
+    "description": "Distinguish successful, transient and terminal responses with a bounded retry recommendation. No notification is sent.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 599
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "status",
+        "attempt",
+        "maxAttempts"
+      ],
+      "additionalProperties": false
+    },
+    "example": {
+      "status": 503,
+      "attempt": 1,
+      "maxAttempts": 3
+    }
+  }
+]

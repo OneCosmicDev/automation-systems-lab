@@ -1,0 +1,75 @@
+{
+  "name": "[Lab] Normalize and route a lead",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Run synthetic example",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "synthetic-input",
+      "name": "Load fictional input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "notes": "Synthetic fixture only. Replace with a validated source in your own environment.",
+      "parameters": {
+        "jsCode": "return [{ json: {\n  \"name\": \" Alex Example \",\n  \"email\": \" ALEX@example.com \",\n  \"source\": \"referral\"\n} }];"
+      }
+    },
+    {
+      "id": "business-rule",
+      "name": "Validate and evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ],
+      "notes": "Generated from the shared pure business function. No network, credentials, or real delivery.",
+      "parameters": {
+        "jsCode": "function leadIntake(input) {\n  if (!input || Object.keys(input).sort().join(',') !== 'email,name,source') throw new Error('INVALID_INPUT');\n  if (typeof input.name !== 'string' || input.name.trim().length < 1 || input.name.length > 120) throw new Error('INVALID_INPUT');\n  if (typeof input.email !== 'string' || input.email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(input.email.trim())) throw new Error('INVALID_INPUT');\n  if (!['website', 'referral', 'event'].includes(input.source)) throw new Error('INVALID_INPUT');\n  return { name: input.name.trim(), email: input.email.trim().toLowerCase(), source: input.source,\n    route: input.source === 'referral' ? 'relationship-team' : 'inbound-team', nextAction: 'review', delivery: 'simulated' };\n}\ntry {\n  return [{ json: { ok: true, result: leadIntake($input.first().json) } }];\n} catch {\n  return [{ json: { ok: false, error: { code: \"INVALID_INPUT\" } } }];\n}"
+      }
+    }
+  ],
+  "connections": {
+    "Run synthetic example": {
+      "main": [
+        [
+          {
+            "node": "Load fictional input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load fictional input": {
+      "main": [
+        [
+          {
+            "node": "Validate and evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 60,
+    "timezone": "UTC"
+  },
+  "pinData": {}
+}

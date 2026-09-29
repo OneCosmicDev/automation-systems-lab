@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "automation-systems-lab": {
+      "command": "node",
+      "args": [
+        "--env-file=/absolute/path/to/automation-systems-lab/.env",
+        "/absolute/path/to/automation-systems-lab/src/mcp.mjs"
+      ]
+    }
+  }
+}
